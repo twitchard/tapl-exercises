@@ -1,0 +1,10 @@
+(library
+ (name experiment)
+ (libraries ppx_expect)
+ (inline_tests)
+ (preprocess
+  (pps ppx_expect)))
+
+(ocamllex lexer)
+
+(ocamlyacc parser)

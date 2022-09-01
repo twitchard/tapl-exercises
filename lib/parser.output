@@ -1,0 +1,230 @@
+   0  $accept : %entry% $end
+
+   1  application : atomic_term
+   2              | atomic_term application
+
+   3  atomic_term : SUCC term
+   4              | PRED term
+   5              | ZERO
+   6              | LAMBDA VAR PERIOD term
+   7              | LPAREN term RPAREN
+   8              | VAR
+
+   9  term : application
+
+  10  prog : term EOF
+
+  11  %entry% : '\001' prog
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . prog  (11)
+
+	SUCC  shift 3
+	PRED  shift 4
+	ZERO  shift 5
+	LAMBDA  shift 6
+	LPAREN  shift 7
+	VAR  shift 8
+	.  error
+
+	prog  goto 9
+	application  goto 10
+	atomic_term  goto 11
+	term  goto 12
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	atomic_term : SUCC . term  (3)
+
+	SUCC  shift 3
+	PRED  shift 4
+	ZERO  shift 5
+	LAMBDA  shift 6
+	LPAREN  shift 7
+	VAR  shift 8
+	.  error
+
+	application  goto 10
+	atomic_term  goto 11
+	term  goto 13
+
+
+state 4
+	atomic_term : PRED . term  (4)
+
+	SUCC  shift 3
+	PRED  shift 4
+	ZERO  shift 5
+	LAMBDA  shift 6
+	LPAREN  shift 7
+	VAR  shift 8
+	.  error
+
+	application  goto 10
+	atomic_term  goto 11
+	term  goto 14
+
+
+state 5
+	atomic_term : ZERO .  (5)
+
+	.  reduce 5
+
+
+state 6
+	atomic_term : LAMBDA . VAR PERIOD term  (6)
+
+	VAR  shift 15
+	.  error
+
+
+state 7
+	atomic_term : LPAREN . term RPAREN  (7)
+
+	SUCC  shift 3
+	PRED  shift 4
+	ZERO  shift 5
+	LAMBDA  shift 6
+	LPAREN  shift 7
+	VAR  shift 8
+	.  error
+
+	application  goto 10
+	atomic_term  goto 11
+	term  goto 16
+
+
+state 8
+	atomic_term : VAR .  (8)
+
+	.  reduce 8
+
+
+state 9
+	%entry% : '\001' prog .  (11)
+
+	.  reduce 11
+
+
+state 10
+	term : application .  (9)
+
+	.  reduce 9
+
+
+11: shift/reduce conflict (shift 3, reduce 1) on SUCC
+11: shift/reduce conflict (shift 4, reduce 1) on PRED
+11: shift/reduce conflict (shift 5, reduce 1) on ZERO
+11: shift/reduce conflict (shift 6, reduce 1) on LAMBDA
+11: shift/reduce conflict (shift 7, reduce 1) on LPAREN
+11: shift/reduce conflict (shift 8, reduce 1) on VAR
+state 11
+	application : atomic_term .  (1)
+	application : atomic_term . application  (2)
+
+	SUCC  shift 3
+	PRED  shift 4
+	ZERO  shift 5
+	LAMBDA  shift 6
+	LPAREN  shift 7
+	VAR  shift 8
+	EOF  reduce 1
+	RPAREN  reduce 1
+
+	application  goto 17
+	atomic_term  goto 11
+
+
+state 12
+	prog : term . EOF  (10)
+
+	EOF  shift 18
+	.  error
+
+
+state 13
+	atomic_term : SUCC term .  (3)
+
+	.  reduce 3
+
+
+state 14
+	atomic_term : PRED term .  (4)
+
+	.  reduce 4
+
+
+state 15
+	atomic_term : LAMBDA VAR . PERIOD term  (6)
+
+	PERIOD  shift 19
+	.  error
+
+
+state 16
+	atomic_term : LPAREN term . RPAREN  (7)
+
+	RPAREN  shift 20
+	.  error
+
+
+state 17
+	application : atomic_term application .  (2)
+
+	.  reduce 2
+
+
+state 18
+	prog : term EOF .  (10)
+
+	.  reduce 10
+
+
+state 19
+	atomic_term : LAMBDA VAR PERIOD . term  (6)
+
+	SUCC  shift 3
+	PRED  shift 4
+	ZERO  shift 5
+	LAMBDA  shift 6
+	LPAREN  shift 7
+	VAR  shift 8
+	.  error
+
+	application  goto 10
+	atomic_term  goto 11
+	term  goto 21
+
+
+state 20
+	atomic_term : LPAREN term RPAREN .  (7)
+
+	.  reduce 7
+
+
+state 21
+	atomic_term : LAMBDA VAR PERIOD term .  (6)
+
+	.  reduce 6
+
+
+State 11 contains 6 shift/reduce conflicts.
+
+
+12 terminals, 6 nonterminals
+12 grammar rules, 22 states
